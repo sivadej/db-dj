@@ -10,7 +10,7 @@ class PlaylistForm(FlaskForm):
 
     # Add the necessary code to use this form
     name = StringField("Playlist Name", validators=[InputRequired()])
-    description = StringField("Description", validators=[InputRequired()])
+    description = StringField("Description", validators=[Optional()])
 
 
 class SongForm(FlaskForm):

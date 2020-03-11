@@ -6,4 +6,33 @@
 
 <h1>Add a form that when submitted adds a song to this playlist!</h1>
 
+
+<p>
+    {% if playlist.playlist_song %}
+    Songs currently in this list:
+    <ul>
+        {% for s in playlist.playlist_song %}
+        <li><a href="/songs/{{s.song.id}}">{{s.song.title}}</a> - {{s.song.artist}}</li>
+        {%endfor%}
+    </ul>
+    {%else%}
+    No songs in this playlist!
+    {% endif %}
+
+</p>
+
+<form method="POST">
+    {{form.hidden_tag()}}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+    <p>
+        {{ field.label }}
+        {{ field }}
+        {% for error in field.errors %}
+        {{ error }}
+        {% endfor %}
+    </p>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button> <a href="/playlists" class="btn btn-danger">Cancel</a>
+</form>
+
 {% endblock %}
