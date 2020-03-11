@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
-db.create_all()
+#db.create_all()
 
 app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
 
@@ -36,7 +36,6 @@ def root():
 @app.route("/playlists")
 def show_all_playlists():
     """Return a list of playlists."""
-
     playlists = Playlist.query.all()
     return render_template("playlists.html", playlists=playlists)
 
@@ -44,8 +43,8 @@ def show_all_playlists():
 @app.route("/playlists/<int:playlist_id>")
 def show_playlist(playlist_id):
     """Show detail on specific playlist."""
-
-    # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    playlist = Playlist.query.get(playlist_id)
+    return render_template('playlist.html', playlist=playlist)
 
 
 @app.route("/playlists/add", methods=["GET", "POST"])
@@ -55,18 +54,24 @@ def add_playlist():
     - if form not filled out or invalid: show form
     - if valid: add playlist to SQLA and redirect to list-of-playlists
     """
-
-    # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    form = PlaylistForm()
+    if form.validate_on_submit():
+        db.session.add(Playlist(
+            name = form.name.data,
+            description = form.description.data
+        ))
+        db.session.commit()
+        return redirect('/playlists')
+    else:
+        return render_template('new_playlist.html', form=form)
 
 
 ##############################################################################
 # Song routes
 
-
 @app.route("/songs")
 def show_all_songs():
     """Show list of songs."""
-
     songs = Song.query.all()
     return render_template("songs.html", songs=songs)
 
@@ -74,8 +79,8 @@ def show_all_songs():
 @app.route("/songs/<int:song_id>")
 def show_song(song_id):
     """return a specific song"""
-
-    # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    song = Song.query.get(song_id)
+    return render_template('song.html', song=song)
 
 
 @app.route("/songs/add", methods=["GET", "POST"])
@@ -83,10 +88,18 @@ def add_song():
     """Handle add-song form:
 
     - if form not filled out or invalid: show form
-    - if valid: add playlist to SQLA and redirect to list-of-songs
+    - if valid: add song to SQLA and redirect to list-of-songs
     """
-
-    # ADD THE NECESSARY CODE HERE FOR THIS ROUTE TO WORK
+    form = SongForm()
+    if form.validate_on_submit():
+        db.session.add(Song(
+            title = form.title.data,
+            artist = form.artist.data
+        ))
+        db.session.commit()
+        return redirect('/songs')
+    else:
+        return render_template('new_song.html', form=form)
 
 
 @app.route("/playlists/<int:playlist_id>/add-song", methods=["GET", "POST"])

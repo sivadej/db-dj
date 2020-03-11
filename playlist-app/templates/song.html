@@ -7,8 +7,16 @@
   <p class="lead">&ndash; {{ song.artist }}</p>
 </div>
 
-<ul>
-  DISPLAY ALL OF THE PLAYLISTS THAT THIS SONG IS A PART OF
-</ul>
+<p>
+  {% if song.playlist_song %}
+  This song can be found in these playlists:
+  <ul>
+    {% for l in song.playlist_song %}
+    <li><a href="/playlists/{{l.playlist.id}}">{{l.playlist.name}}</a></li>
+    {%endfor%}
+  </ul>
+  {% endif %}
+
+</p>
 
 {% endblock %}
